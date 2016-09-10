@@ -7,6 +7,7 @@
 #define MyAppURL "http://www.openflare.org/"
 #define MyAppExeName "OpenFlareClient.exe"
 #define use_dotnetfx46
+#define PluginName "gen_openflare"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -72,6 +73,8 @@ Source: "..\OpenFlareClient\bin\x86\Release\Sharp.Xmpp.dll"; DestDir: "{app}"; F
 Source: "..\OpenFlareClient\bin\x86\Release\taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
 Source: "Resources\Settings.json"; DestDir: "{app}"; Flags: ignoreversion 64bit; Permissions: authusers-full
 Source: "Resources\Settings.json"; DestDir: "{app}"; Flags: ignoreversion 32bit; Permissions: authusers-full
+Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetAimpPluginDIR}\{#PluginName}"; Flags: ignoreversion; Check: IsAIMPInstalled
+Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetWinampPluginDIR}"; Flags: ignoreversion; Check: IsWINAMPInstalled
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -204,6 +207,61 @@ UseRelativePaths=True
 #endif
 
 [Code]
+function IsAIMPInstalled: boolean;
+begin
+  result := RegKeyExists(HKEY_LOCAL_MACHINE,
+    'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AIMP.exe');
+end;
+
+function IsWINAMPInstalled: boolean;
+begin
+  result := RegKeyExists(HKEY_LOCAL_MACHINE,
+    'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\winamp.exe');
+end;
+
+var
+  AimpDIR: String;
+
+function GetAimpDIR(): String;
+begin
+
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AIMP.exe',
+     '', AimpDIR) then
+  begin
+    // Successfully read the value
+    StringChangeEx(AimpDIR, 'AIMP.exe', '', True);
+    Result := AimpDIR;   
+  end;
+end;
+
+function GetAimpPluginDIR(Param: String): String;
+begin
+  if DirExists(GetAimpDIR()+'Plugins') then
+        Result := ExpandConstant('{code:GetAimpDIR}\Plugins')
+  else
+        Result := ExpandConstant('{code:GetAimpDIR}\PlugIns');
+end;
+
+var
+  WinampDIR: String;
+
+function GetWinampDIR: String;
+begin
+
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\winamp.exe',
+     '', WinampDIR) then
+  begin
+    // Successfully read the value
+    StringChangeEx(WinampDIR, 'winamp.exe', '', True);
+    Result := WinampDIR;   
+  end;
+end;
+
+function GetWinampPluginDIR(Param: String): String;
+begin
+        Result :=  ExpandConstant('{code:GetWinampDIR}\Plugins');
+end;
+
 function InitializeSetup(): boolean;
 begin
 	// initialize windows version
