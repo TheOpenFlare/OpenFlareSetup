@@ -32,7 +32,6 @@ ArchitecturesInstallIn64BitMode=x64
 InternalCompressLevel=ultra64
 CompressionThreads=2
 UninstallDisplayIcon={app}\OpenFlareClient.exe
-DisableStartupPrompt=False
 Uninstallable=yes
 VersionInfoVersion=1
 VersionInfoCompany=OpenFlare
@@ -40,6 +39,8 @@ VersionInfoTextVersion=1
 VersionInfoProductName=OpenFlare Client
 VersionInfoProductVersion=1
 VersionInfoProductTextVersion=1
+ShowTasksTreeLines=True
+RestartIfNeededByRun=False
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
@@ -51,6 +52,8 @@ Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "AIMP"; Description: "AIMP Plugin"; GroupDescription: "Plugins"; Flags: checkedonce; Check: IsAIMPInstalled
+Name: "WINAMP"; Description: "WINAMP Plugin"; GroupDescription: "Plugins"; Flags: checkedonce; Check: IsWINAMPInstalled
 
 [Files]
 Source: "..\OpenFlareClient\bin\x64\Release\OpenFlareClient.exe"; DestDir: "{app}"; Flags: ignoreversion 64bit
@@ -73,8 +76,8 @@ Source: "..\OpenFlareClient\bin\x86\Release\Sharp.Xmpp.dll"; DestDir: "{app}"; F
 Source: "..\OpenFlareClient\bin\x86\Release\taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
 Source: "Resources\Settings.json"; DestDir: "{app}"; Flags: ignoreversion 64bit; Permissions: authusers-full
 Source: "Resources\Settings.json"; DestDir: "{app}"; Flags: ignoreversion 32bit; Permissions: authusers-full
-Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetAimpPluginDIR}\{#PluginName}"; Flags: ignoreversion; Check: IsAIMPInstalled
-Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetWinampPluginDIR}"; Flags: ignoreversion; Check: IsWINAMPInstalled
+Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetAimpPluginDIR}\{#PluginName}"; Flags: ignoreversion; Tasks: AIMP; Check: IsAIMPInstalled
+Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetWinampPluginDIR}"; Flags: ignoreversion; Tasks: WINAMP; Check: IsWINAMPInstalled
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -209,57 +212,73 @@ UseRelativePaths=True
 [Code]
 function IsAIMPInstalled: boolean;
 begin
-  result := RegKeyExists(HKEY_LOCAL_MACHINE,
-    'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AIMP.exe');
+    if IsWin64 then
+      result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\AIMP')
+    else
+      result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\AIMP');
 end;
 
 function IsWINAMPInstalled: boolean;
 begin
-  result := RegKeyExists(HKEY_LOCAL_MACHINE,
-    'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\winamp.exe');
+    if IsWin64 then
+      result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Winamp')
+    else
+      result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Winamp');
 end;
 
 var
   AimpDIR: String;
 
-function GetAimpDIR(): String;
+function GetAimpDIR(Param: String): String;
 begin
-
-  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AIMP.exe',
-     '', AimpDIR) then
+ if IsWin64 then
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\AIMP',
+     'InstallPath', AimpDIR) then
   begin
-    // Successfully read the value
-    StringChangeEx(AimpDIR, 'AIMP.exe', '', True);
     Result := AimpDIR;   
-  end;
+  end
+ else
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\AIMP',
+     'InstallPath', AimpDIR) then
+  begin
+    Result := AimpDIR;   
+  end; 
 end;
 
 function GetAimpPluginDIR(Param: String): String;
-begin
-  if DirExists(GetAimpDIR()+'Plugins') then
-        Result := ExpandConstant('{code:GetAimpDIR}\Plugins')
+begin   
+  if DirExists(ExpandConstant('{code:GetAimpDIR}Plugins')) then
+        Result := ExpandConstant('{code:GetAimpDIR}Plugins')
   else
-        Result := ExpandConstant('{code:GetAimpDIR}\PlugIns');
+        Result := ExpandConstant('{code:GetAimpDIR}PlugIns');
 end;
 
 var
   WinampDIR: String;
 
-function GetWinampDIR: String;
+function GetWinampDIR(Param: String): String;
 begin
-
-  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\winamp.exe',
-     '', WinampDIR) then
+ if IsWin64 then
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Winamp',
+     'UninstallString', WinampDIR) then
   begin
-    // Successfully read the value
-    StringChangeEx(WinampDIR, 'winamp.exe', '', True);
+    StringChangeEx(WinampDIR, '"', '', True);
+    StringChangeEx(WinampDIR, 'UninstWA.exe', '', True);
     Result := WinampDIR;   
-  end;
+  end
+ else
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Winamp',
+     'UninstallString', WinampDIR) then
+  begin
+    StringChangeEx(WinampDIR, '"', '', True);
+    StringChangeEx(WinampDIR, 'UninstWA.exe', '', True);
+    Result := WinampDIR;   
+  end; 
 end;
 
 function GetWinampPluginDIR(Param: String): String;
 begin
-        Result :=  ExpandConstant('{code:GetWinampDIR}\Plugins');
+        Result :=  ExpandConstant('{code:GetWinampDIR}Plugins');
 end;
 
 function InitializeSetup(): boolean;
