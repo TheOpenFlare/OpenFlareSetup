@@ -56,26 +56,26 @@ Name: "AIMP"; Description: "AIMP Plugin"; GroupDescription: "Plugins"; Flags: ch
 Name: "WINAMP"; Description: "WINAMP Plugin"; GroupDescription: "Plugins"; Flags: checkedonce; Check: IsWINAMPInstalled
 
 [Files]
-Source: "..\OpenFlareClient\bin\x64\Release\OpenFlareClient.exe"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\ARSoft.Tools.Net.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\BouncyCastle.Crypto.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\Gat.Controls.AboutBox.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\Hardcodet.Wpf.TaskbarNotification.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\policy.2.0.taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\Sharp.Xmpp.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x64\Release\taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\OpenFlareClient\bin\x86\Release\OpenFlareClient.exe"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\ARSoft.Tools.Net.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\BouncyCastle.Crypto.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\Gat.Controls.AboutBox.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\Hardcodet.Wpf.TaskbarNotification.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\policy.2.0.taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\Sharp.Xmpp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "..\OpenFlareClient\bin\x86\Release\taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit
-Source: "Resources\Settings.json"; DestDir: "{app}"; Flags: ignoreversion 64bit; Permissions: authusers-full
-Source: "Resources\Settings.json"; DestDir: "{app}"; Flags: ignoreversion 32bit; Permissions: authusers-full
+Source: "..\OpenFlareClient\bin\x64\Release\OpenFlareClient.exe"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\ARSoft.Tools.Net.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\BouncyCastle.Crypto.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\Gat.Controls.AboutBox.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\Hardcodet.Wpf.TaskbarNotification.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\policy.2.0.taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\Sharp.Xmpp.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x64\Release\taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 64bit; Check: IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\OpenFlareClient.exe"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\ARSoft.Tools.Net.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\BouncyCastle.Crypto.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\Gat.Controls.AboutBox.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\Hardcodet.Wpf.TaskbarNotification.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\policy.2.0.taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\Sharp.Xmpp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "..\OpenFlareClient\bin\x86\Release\taglib-sharp.dll"; DestDir: "{app}"; Flags: ignoreversion 32bit; Check: not IsWin64
+Source: "Resources\Settings.json"; DestDir: "{userappdata}\OpenFlare\Client"; Flags: ignoreversion 64bit onlyifdoesntexist; Check: IsWin64
+Source: "Resources\Settings.json"; DestDir: "{userappdata}\OpenFlare\Client"; Flags: ignoreversion 32bit onlyifdoesntexist; Check: not IsWin64
 Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetAimpPluginDIR}\{#PluginName}"; Flags: ignoreversion; Tasks: AIMP; Check: IsAIMPInstalled
 Source: "Resources\gen_openflare.dll"; DestDir: "{code:GetWinampPluginDIR}"; Flags: ignoreversion; Tasks: WINAMP; Check: IsWINAMPInstalled
 
